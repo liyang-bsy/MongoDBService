@@ -14,10 +14,10 @@ Release under LGPL license, consult your rights before using.
 >
 >Even more complex:
 >
->Date date2 = new Date();
->xxxService.queryForList(
->	new String[] { "cond1", "or(cond2 >","and(cond3","cond4 like",")",")" },
->	new Object[] { "value1", date2, number3, "string4" })
+```java
+Date date2 = new Date();
+xxxService.queryForList(new String[] { "cond1", "or(cond2 >","and(cond3","cond4 like",")",")" }, new Object[] { "value1", date2, number3, "string4" })
+```
 >
 >Essential dependents:
 >>Morphia Project : https://github.com/mongodb/morphia
