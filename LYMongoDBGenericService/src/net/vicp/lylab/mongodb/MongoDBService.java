@@ -265,6 +265,10 @@ public class MongoDBService<T> {
 			tmp = q.criteria(pair.getLeft().replace("<", "").trim()).lessThan(pair.getRight());
 		else if(pair.getLeft().contains("="))
 			tmp = q.criteria(pair.getLeft().replace("=", "").trim()).equal(pair.getRight());
+		else if(pair.getLeft().contains(" in"))
+			tmp = q.criteria(pair.getLeft().replace(" in", "").trim()).in((Iterable<?>) pair.getRight());
+		else if(pair.getLeft().contains(" nin"))
+			tmp = q.criteria(pair.getLeft().replace(" nin", "").trim()).notIn((Iterable<?>) pair.getRight());
 		// 等值匹配
 		else tmp = q.criteria(pair.getLeft()).equal(pair.getRight());
 		
