@@ -18,6 +18,8 @@ public class MongoDBConfig {
 	private static String user;
 	// 对应的密码
 	private static String password;
+	// 是否显示查询字符串
+	private static Boolean showQuery;
 	// MongoDB本体
 	private static MongoClient mongoClient;
 	
@@ -84,6 +86,14 @@ public class MongoDBConfig {
 		MongoDBConfig.password = password;
 	}
 
+	public static Boolean getShowQuery() {
+		return showQuery;
+	}
+
+	public static void setShowQuery(Boolean showQuery) {
+		MongoDBConfig.showQuery = showQuery;
+	}
+
 	public static MongoClient getMongoClient() {
 		return mongoClient;
 	}
@@ -91,4 +101,5 @@ public class MongoDBConfig {
 	public static void setMongoClient(MongoClient mongoClient) {
 		MongoDBConfig.mongoClient = mongoClient;
 	}
+	
 }

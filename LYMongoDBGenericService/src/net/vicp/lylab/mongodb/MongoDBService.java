@@ -219,14 +219,13 @@ public class MongoDBService<T> {
 			return;
 		}
 		String operator = cps.pop().getLeft();
-		operator = operator.replace("(", "");
-		if(operator.equals("and"))
+		if(operator.equals("and("))
 		{
 			tmp = q.and(cl.toArray(new CriteriaContainer[cl.size()]));
 			cl.clear();
 			cl.add(tmp);
 		}
-		else if(operator.equals("or"))
+		else if(operator.equals("or("))
 		{
 			tmp = q.or(cl.toArray(new CriteriaContainer[cl.size()]));
 			cl.clear();
@@ -265,13 +264,12 @@ public class MongoDBService<T> {
 			tmp = q.criteria(pair.getLeft().replace("<", "").trim()).lessThan(pair.getRight());
 		else if(pair.getLeft().contains("="))
 			tmp = q.criteria(pair.getLeft().replace("=", "").trim()).equal(pair.getRight());
-		else if(pair.getLeft().contains(" in"))
-			tmp = q.criteria(pair.getLeft().replace(" in", "").trim()).in((Iterable<?>) pair.getRight());
-		else if(pair.getLeft().contains(" nin"))
-			tmp = q.criteria(pair.getLeft().replace(" nin", "").trim()).notIn((Iterable<?>) pair.getRight());
+		else if(pair.getLeft().endsWith(" in"))
+			tmp = q.criteria(pair.getLeft().replaceFirst(" in$", "").trim()).in((Iterable<?>) pair.getRight());
+		else if(pair.getLeft().endsWith(" nin"))
+			tmp = q.criteria(pair.getLeft().replaceFirst(" nin$", "").trim()).in((Iterable<?>) pair.getRight());
 		// 等值匹配
 		else tmp = q.criteria(pair.getLeft()).equal(pair.getRight());
-		
 		return tmp;
 	}
 	// Query顺序分析
@@ -293,6 +291,7 @@ public class MongoDBService<T> {
 				{
 					cps.push(new Pair<String, Object>("and(", ""));
 					String key = k[i].replace("and(", "").trim();
+					if(key.endsWith(")")) throw new SQLException("\"(\" and \")\" exists in one condition");
 					if(!key.equals(""))
 					{
 						cps.push(new Pair<String, Object>(key, v[j]));
@@ -304,6 +303,7 @@ public class MongoDBService<T> {
 				{
 					cps.push(new Pair<String, Object>("or(", ""));
 					String key = k[i].replace("or(", "").trim();
+					if(key.endsWith(")")) throw new SQLException();
 					if(!key.equals(""))
 					{
 						if(!(v[j] == null || (v[j].getClass().getName().equals("java.lang.String") && ((String) v[j]).trim().equals(""))))
@@ -327,7 +327,7 @@ public class MongoDBService<T> {
 			// 普通模式
 			else
 			{
-				cps.push(new Pair<String, Object>(k[i], v[j]));
+				cps.push(new Pair<String, Object>(k[i].trim(), v[j]));
 				j++;
 			}
 		}
